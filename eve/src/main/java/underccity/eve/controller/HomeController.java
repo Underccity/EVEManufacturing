@@ -1,16 +1,31 @@
 package underccity.eve.controller;
 
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import underccity.eve.entity.Blueprint;
+import underccity.eve.service.BlueprintService;
 
 @Controller
 public class HomeController {
 
-	@GetMapping("/greeting")
-	public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-		model.addAttribute("name", name);
+	private BlueprintService bluePrintService;
+
+	public HomeController(BlueprintService bluePrintService) {
+		super();
+		this.bluePrintService = bluePrintService;
+	}
+
+	@GetMapping("/list")
+	public String listBluePrint(Model theModel) {
+		
+		List<Blueprint> thebluePrints = bluePrintService.findAll();
+		
+		
+//		theModel.addAttribute("bluePrints", thebluePrints);
+		
 		return "greeting";
 	}
 }
