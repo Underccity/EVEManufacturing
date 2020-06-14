@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<title>Save Blueprint</title>
+</head>
+
+<body>
+
+	<div class="container">
+	
+		<h3>[[${blueprint.name}]]</h3>
+		<hr>
+		
+		<form action="#" th:action="@{/blueprint/upsert}"
+						 th:object="${blueprint}" method="POST">
+		
+			<input type="hidden" th:field="*{id}" />
+			<input type="hidden" th:field="*{result.id}" id="resultItemId"/>
+			
+			<input type="text" th:field="*{name}"
+					class="form-control mb-4 col-4" placeholder="Название">
+ 			<input type="text" id="item" th:field="*{result.name}" class="form-control mb-4 col-4" >
+			<input type="text" th:field="*{countResultItem}"
+					class="form-control mb-4 col-4" placeholder="Количество">
+					
+			<div th:each="component, itemStat : *{components}" class="form-row"
+			 	th:include="blueprints/include/editableItemFragment :: edittableItem"></div>
+	
+			<button type="submit" class="btn btn-info col-2">Save</button>
+						
+		</form>
+	
+		<hr>
+		<a th:href="@{/employees/list}">Back to Employees List</a>
+		
+	</div>
+	
+	<script>
+	$(function() {
+		$("#item").autocomplete({
+			source: function (request, response) {
+		         $.ajax({
+		             url: "/item",
+		             data: { name: request.term },
+		             dataType: "json",
+		             success: function(data) {
+		            	 var items = [];
+		            	 $.each(data, function(key, val) {
+		                     items.push({"label": val.name, "value": val.id}); // добавляем все элементы
+		                 });
+						response(items);
+		             },
+		             error: function () {
+		                 response([]);
+		             }
+		         })
+			},
+			select: function(event, ui) {
+				console.log(ui);
+				this.value = ui.item.label;
+				$("#resultItemId").val(ui.item.value);
+				return false;
+			}
+		});
+
+	});
+	</script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

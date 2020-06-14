@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+	<title>Blueprints Directory</title>
+</head>
+
+<body>
+
+<div class="container">
+
+	<h3>Blueprints Directory</h3>
+	<hr>
+	
+	<table class="table table-bordered table-striped">
+		<thead class="thead-dark">
+			<tr>
+				<th>Название</th>
+				<th>Результат</th>
+				<th>Количество</th>
+				<th>Компоненты</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="blueprint: ${blueprints}">
+			
+				<td >
+					<a th:href="@{/blueprint/showEditForm(blueprintId=${blueprint.id})}"
+						class="btn btn-primary btn-sm mb-3">
+						Edit
+					</a>
+					<a th:text="${blueprint.name}" th:href="@{'/blueprint/' + ${blueprint.id}}"></a>
+				</td>
+				<td th:text="${blueprint.result.name}" />	
+				<td th:text="${blueprint.countResultItem}" />	
+				
+				<td>
+					<p th:each="component: ${blueprint.components}" th:text="${component.item.name}+' x'+${component.count}"/>
+				</td>
+				
+				
+			</tr>
+		</tbody>		
+	</table>
+	
+</div>
+	
+</body>
+</html>
+
+
+

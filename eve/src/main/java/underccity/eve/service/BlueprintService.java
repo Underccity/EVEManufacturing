@@ -7,9 +7,9 @@ import underccity.eve.entity.Blueprint;
 public interface BlueprintService {
 	
 	public List<Blueprint> findAll();
-	public Blueprint findById(int id);
+	public Blueprint findById(Long id);
 //	public Blueprint findByName(String name);
 	
-	public void upsert(Blueprint blueprint);
-	public void deleteById(int id);
+	public boolean upsert(Blueprint blueprint);
+	public void deleteById(Long id);
 }

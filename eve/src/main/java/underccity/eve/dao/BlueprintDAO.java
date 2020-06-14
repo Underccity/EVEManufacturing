@@ -6,7 +6,7 @@ import underccity.eve.entity.Blueprint;
 
 public interface BlueprintDAO {
 	public List<Blueprint> findAll();
-	public Blueprint findById(int theId);
-	public void save(Blueprint blueprint);
-	public void deleteById(int theId);
+	public Blueprint findById(Long theId);
+	public boolean save(Blueprint blueprint);
+	public void deleteById(Long theId);
 }

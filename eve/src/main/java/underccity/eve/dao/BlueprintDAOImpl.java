@@ -5,11 +5,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.hibernate.Query;
+import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import underccity.eve.entity.Blueprint;
+import underccity.eve.entity.Components;
+import underccity.eve.entity.ComponentsKey;
 
 @Repository
 public class BlueprintDAOImpl implements BlueprintDAO{
@@ -35,20 +39,67 @@ public class BlueprintDAOImpl implements BlueprintDAO{
 	}
 
 	@Override
-	public Blueprint findById(int theId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void save(Blueprint blueprint) {
-		// TODO Auto-generated method stub
+	public Blueprint findById(Long theId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		return currentSession.find(Blueprint.class, theId);
 		
 	}
 
 	@Override
-	public void deleteById(int theId) {
-		// TODO Auto-generated method stub
+	public boolean save(Blueprint blueprint) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		Transaction tx = null;
+		try {
+			tx = currentSession.beginTransaction();
+			currentSession.saveOrUpdate(blueprint);
+			if(blueprint.getComponents() != null && !blueprint.getComponents().isEmpty()) {
+				for(Components component:blueprint.getComponents()) {
+					ComponentsKey ck = new ComponentsKey();
+					ck.setBlueprintId(blueprint.getId());
+					ck.setItemId(component.getItem().getId());
+					component.setId(ck);
+					currentSession.merge(component);
+				}
+				
+			}
+			tx.commit();
+		} catch (Exception e){
+			if (tx != null) {
+				tx.rollback();
+				throw e;
+			}
+		} finally {
+			currentSession.close();
+		}
+		
+		
+		return true;
+		
+		
+	}
+
+	@Override
+	public void deleteById(Long theId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		Blueprint blueprint = findById(theId);
+		if(blueprint == null) {
+			throw new IllegalArgumentException("Can't find blueprint with id = " + theId);
+		}
+		Transaction tx = null;
+		try {
+			tx = currentSession.beginTransaction();
+			currentSession.delete(blueprint);
+			tx.commit();
+		} catch (Exception e){
+			if (tx != null) {
+				tx.rollback();
+				throw e;
+			}
+		} finally {
+			currentSession.close();
+		}
+		
 		
 	}
 

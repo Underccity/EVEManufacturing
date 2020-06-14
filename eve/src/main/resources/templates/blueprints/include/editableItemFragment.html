@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="edittableItem" class="form-row">
+		<input type="hidden" th:field="*{components[__${itemStat.index}__].item.id}"/>
+		<input type="text" th:field="*{components[__${itemStat.index}__].item.name}" class="form-control mb-4 col-4" >
+		<input type="number" th:field="*{components[__${itemStat.index}__].count}" class="form-control mb-4 col-4" >
+	</div>
+</body>
+</html>

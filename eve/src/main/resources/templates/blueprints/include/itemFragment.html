@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<li th:fragment="item" class="list-group-item"
+		th:each="component : ${componentList}">
+		[[${component.item.name}]] x[[${component.count}]]
+		<ul class="list-group" th:if="${component.item.blueprint != null}"
+			th:insert="blueprints/include/itemFragment :: item"
+			th:with="componentList=${component.item.blueprint.components}">
+		</ul>
+	</li>
+</body>
+</html>

@@ -24,7 +24,7 @@ public class BlueprintServiceImpl implements BlueprintService {
 	}
 
 	@Override
-	public Blueprint findById(int id) {
+	public Blueprint findById(Long id) {
 		Blueprint result = blueprintRepository.findById(id);
 		
 		if (result == null) {
@@ -41,13 +41,13 @@ public class BlueprintServiceImpl implements BlueprintService {
 
 
 	@Override
-	public void upsert(Blueprint blueprint) {
-		blueprintRepository.save(blueprint);
+	public boolean upsert(Blueprint blueprint) {
+		return blueprintRepository.save(blueprint);
 
 	}
 
 	@Override
-	public void deleteById(int id) {
+	public void deleteById(Long id) {
 		blueprintRepository.deleteById(id);
 
 	}
