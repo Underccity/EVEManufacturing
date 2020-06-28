@@ -48,23 +48,28 @@ public class BlueprintController {
 	}
 	
 	@PostMapping("/upsert")
-	public boolean upsertBluePrint(@Valid @RequestBody Blueprint blueprint) {
-		
-		return bluePrintService.upsert(blueprint);
+	public String upsertBluePrint(@Valid Blueprint blueprint) {
+		bluePrintService.upsert(blueprint);
+		return "redirect:/blueprint/list";//bluePrintService.upsert(blueprint);
 	}
 	
-	@GetMapping("/delete/{deleteId}")
-	public void deleteBluePrint(@Valid @PathVariable Long deleteId) {
+	@GetMapping("/delete")
+	public String deleteBluePrint(@RequestParam("blueprintId") Long blueprintId) {
 		
-		bluePrintService.deleteById(deleteId);
+		bluePrintService.deleteById(blueprintId);
+		return "redirect:/blueprint/list"; 
 	}
 	
 	@GetMapping("/showEditForm")
-	public String showEditForm(@RequestParam("blueprintId") Long blueprintId,
+	public String showEditForm(@RequestParam(value="blueprintId",  required = false) Long blueprintId,
 								Model theModel) {
 		
-		Blueprint blueprint = bluePrintService.findById(blueprintId);
-		
+		Blueprint blueprint = null;
+		if(blueprintId != null) {
+			blueprint = bluePrintService.findById(blueprintId);
+		} else {
+			blueprint = new Blueprint();
+		}
 		theModel.addAttribute("blueprint", blueprint);
 		return "blueprints/blueprintEditForm";
 	}

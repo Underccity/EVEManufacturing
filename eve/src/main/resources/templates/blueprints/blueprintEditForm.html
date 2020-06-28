@@ -19,61 +19,113 @@
 	<div class="container">
 	
 		<h3>[[${blueprint.name}]]</h3>
+				<a th:href="@{/blueprint/list}"
+			class="btn btn-primary btn-sm mb-3">
+			К списку чертежей
+		</a>
 		<hr>
 		
-		<form action="#" th:action="@{/blueprint/upsert}"
+		<form action="#" id="blueprintUpsertForm" th:action="@{/blueprint/upsert}"
 						 th:object="${blueprint}" method="POST">
 		
 			<input type="hidden" th:field="*{id}" />
-			<input type="hidden" th:field="*{result.id}" id="resultItemId"/>
 			
 			<input type="text" th:field="*{name}"
 					class="form-control mb-4 col-4" placeholder="Название">
- 			<input type="text" id="item" th:field="*{result.name}" class="form-control mb-4 col-4" >
-			<input type="text" th:field="*{countResultItem}"
+			<input type="hidden" th:field="*{result.id}" id="resultItemId"/>
+ 			<input type="text" th:field="*{result.name}" class="form-control mb-4 col-4 itemName" >
+			<input type="number" th:field="*{countResultItem}"
 					class="form-control mb-4 col-4" placeholder="Количество">
-					
-			<div th:each="component, itemStat : *{components}" class="form-row"
+			<fieldset id="componentList">	
+				<div th:each="component, itemStat : *{components}" class="form-row" 
 			 	th:include="blueprints/include/editableItemFragment :: edittableItem"></div>
-	
+		 	</fieldset>
+			<button type="button" class="btn btn-info col-2" onclick="addRow()">Add Item</button>
 			<button type="submit" class="btn btn-info col-2">Save</button>
-						
+			<a th:href="@{/blueprint/delete(blueprintId=${blueprint.id})}"
+				th:if="${blueprint.id != null}"
+				class="btn btn-danger col-2"> Delete </a>			
 		</form>
-	
 		<hr>
-		<a th:href="@{/employees/list}">Back to Employees List</a>
-		
 	</div>
 	
 	<script>
 	$(function() {
-		$("#item").autocomplete({
-			source: function (request, response) {
-		         $.ajax({
-		             url: "/item",
-		             data: { name: request.term },
-		             dataType: "json",
-		             success: function(data) {
-		            	 var items = [];
-		            	 $.each(data, function(key, val) {
-		                     items.push({"label": val.name, "value": val.id}); // добавляем все элементы
-		                 });
-						response(items);
-		             },
-		             error: function () {
-		                 response([]);
-		             }
-		         })
-			},
-			select: function(event, ui) {
-				console.log(ui);
-				this.value = ui.item.label;
-				$("#resultItemId").val(ui.item.value);
-				return false;
-			}
-		});
+	    $(document).on('keydown.autocomplete', '.itemName', function() {
+
+			$(".itemName").autocomplete({
+				source: function (request, response) {
+			         $.ajax({
+			             url: "/item",
+			             data: { name: request.term },
+			             dataType: "json",
+			             success: function(data) {
+			            	 var items = [];
+			            	 $.each(data, function(key, val) {
+			                     items.push({"label": val.name, "value": val.id}); // добавляем все элементы
+			                 });
+							response(items);
+			             },
+			             error: function () {
+			                 response([]);
+			             }
+			         })
+				},
+				select: function(event, ui) {
+					console.log(ui);
+					this.value = ui.item.label;
+					this.previousElementSibling.value = ui.item.value;
+					return false;
+				}
+			});
+	    });
 
 	});
+	
+	let addRow = function () {
+        let listName = 'components';
+        let fieldsNames = ['item.id', 'item.name', 'count']; 
+        let rowIndex = document.querySelectorAll('.form-row').length;
+
+        let row = document.createElement('div');
+        row.classList.add('form-row');
+        fieldsNames.forEach((fieldName) => {
+            let input = document.createElement('input');
+            if(fieldName === 'item.id'){
+            	input.type = 'hidden';
+            } else if(fieldName === 'count'){
+            	input.type = 'number';
+            } else{
+            	input.classList.add('itemName');
+            	input.type = 'text';
+            }
+            input.classList.add('form-control', 'mb-4', 'col-4');
+            input.id = listName + rowIndex + '.' + fieldName;
+            input.setAttribute('name', listName + '[' + rowIndex + '].' + fieldName);
+			
+            row.appendChild(input);
+        });
+
+        document.getElementById('componentList').appendChild(row);
+};
+
+//Recalculate index of attributes 'id' and 'name' of all eleements 'components" when someone removing
+$('button[name="removeItem"]').click(function (event) {
+    event.preventDefault();
+    var overrideIndex = $(this).val();
+    var components = $('input[id^="components"]');
+    for (i = 0 ; i < components.length; i++){
+    	var componentId = components[i].id;
+    	var componentIndex = componentId.slice(10, componentId.indexOf("."));
+    	if(componentIndex <= $(this).val()) continue;
+    	
+    	componentIndex = overrideIndex;
+    	if(componentId.indexOf("count") != -1) overrideIndex++;
+    	components[i].id = "components" + componentIndex + componentId.substring(componentId.indexOf("."))
+    	components[i].name = "components[" + componentIndex + "]" + components[i].name.substring(components[i].name.indexOf("."))
+    }
+    $(this).context.parentElement.remove();
+});
 	</script>
 </body>
 

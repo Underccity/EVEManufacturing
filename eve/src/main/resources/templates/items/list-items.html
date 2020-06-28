@@ -9,50 +9,39 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-	<title>Blueprints Directory</title>
+	<title>Items Directory</title>
 </head>
 
 <body>
 
 <div class="container">
 
-	<h3>Blueprints Directory</h3>
-	<a th:href="@{/item/list}"
+	<h3>Items Directory</h3>
+	<a th:href="@{/blueprint/list}"
 						class="btn btn-primary btn-sm mb-3">
-						Список предметов
+						Список чертежей
 					</a>
 	<hr>
-	<a th:href="@{/blueprint/showEditForm}"
+	<a th:href="@{/item/showEditForm}"
 						class="btn btn-primary btn-sm mb-3">
-						Добавить чертеж
+						Добавить элемент
 					</a>
 	<table class="table table-bordered table-striped">
 		<thead class="thead-dark">
 			<tr>
 				<th>Название</th>
-				<th>Результат</th>
-				<th>Количество</th>
-				<th>Компоненты</th>
 			</tr>
 		</thead>
 		
 		<tbody>
-			<tr th:each="blueprint: ${blueprints}">
+			<tr th:each="item: ${items}">
 				<td >
-					<a th:href="@{/blueprint/showEditForm(blueprintId=${blueprint.id})}"
+					<a th:href="@{/item/showEditForm(itemId=${item.id})}"
 						class="btn btn-primary btn-sm mb-3">
 						Edit
 					</a>
-					<a th:text="${blueprint.name}" th:href="@{'/blueprint/' + ${blueprint.id}}"></a>
+					<a th:text="${item.name}" th:href="@{'/item/' + ${item.id}}"></a>
 				</td>
-				<td th:text="${blueprint.result.name}" />	
-				<td th:text="${blueprint.countResultItem}" />	
-				
-				<td>
-					<p th:each="component: ${blueprint.components}" th:text="${component.item.name}+' x'+${component.count}"/>
-				</td>
-				
-				
 			</tr>
 		</tbody>		
 	</table>

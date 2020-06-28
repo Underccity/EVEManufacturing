@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+	integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<title>Save Item</title>
+</head>
+
+<body>
+
+	<div class="container">
+
+		<h3>[[${item.name}]]</h3>
+		<a th:href="@{/item/list}"
+			class="btn btn-primary btn-sm mb-3">
+			К списку предметов
+		</a>
+		<hr>
+
+		<form action="#" id="itemUpsertForm" th:action="@{/item/upsert}"
+			th:object="${item}" method="POST">
+			<div class="form-group">
+				<input type="hidden" th:field="*{id}" /> <input type="text"
+					th:field="*{name}" class="form-control col-4"
+					th:classappend="${#fields.hasErrors('name')} ? is-invalid"
+					placeholder="Название" required>
+				<div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+					th:errors="*{name}"></div>
+			</div>
+			<button type="submit" class="btn btn-info col-2">Save</button>
+			<a th:href="@{/item/delete(itemId=${item.id})}"
+				th:if="${item.id != null}"
+				class="btn btn-danger col-2"> Delete </a>
+			<div class="alert alert-danger" th:if="${deleteError}" th:text="${deleteError}"></div>
+		</form>
+		<hr>
+	</div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

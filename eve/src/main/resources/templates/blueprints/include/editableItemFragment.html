@@ -3,8 +3,9 @@
 <body>
 	<div th:fragment="edittableItem" class="form-row">
 		<input type="hidden" th:field="*{components[__${itemStat.index}__].item.id}"/>
-		<input type="text" th:field="*{components[__${itemStat.index}__].item.name}" class="form-control mb-4 col-4" >
+		<input type="text" th:field="*{components[__${itemStat.index}__].item.name}" class="form-control mb-4 col-4 itemName" >
 		<input type="number" th:field="*{components[__${itemStat.index}__].count}" class="form-control mb-4 col-4" >
+		<button type ="button" name = removeItem th:value="${itemStat.index}">-</button>
 	</div>
 </body>
 </html>

@@ -89,6 +89,10 @@ public class BlueprintDAOImpl implements BlueprintDAO{
 		Transaction tx = null;
 		try {
 			tx = currentSession.beginTransaction();
+			List<Components> components= blueprint.getComponents();
+			for(Components component:components) {
+				currentSession.delete(component);
+			}
 			currentSession.delete(blueprint);
 			tx.commit();
 		} catch (Exception e){

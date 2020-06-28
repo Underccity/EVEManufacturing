@@ -1,6 +1,6 @@
 package underccity.eve.entity;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,7 +45,7 @@ public class Blueprint {
 	@OneToMany(mappedBy = "blueprint", cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
 	@NotEmpty
 	@Valid
-	Set<Components> components;
+	private List<Components> components;
 
 	public Long getId() {
 		return id;
@@ -75,15 +75,16 @@ public class Blueprint {
 		return countResultItem;
 	}
 
-	public void setCountResultItems(int countResultItem) {
+	public void setCountResultItem(int countResultItem) {
 		this.countResultItem = countResultItem;
 	}
 
-	public Set<Components> getComponents() {
+	public List<Components> getComponents() {
 		return components;
 	}
-
-	public void setComponents(Set<Components> components) {
+	
+	public void setComponents(List<Components> components) {
 		this.components = components;
 	}
+
 }
