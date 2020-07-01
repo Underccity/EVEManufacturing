@@ -3,10 +3,19 @@
 <body>
 	<li th:fragment="item" class="list-group-item"
 		th:each="component : ${componentList}">
-		[[${component.item.name}]] x[[${component.count}]]
-		<ul class="list-group" th:if="${component.item.blueprint != null}"
+		<button onclick="toogleButtonClass(this)"
+			th:if="${component.item.blueprint != null}" class="btn btn-primary toggledButton"
+			type="button" data-toggle="collapse"
+			th:attr="data-target='#' + ${generatedId}"
+			th:with="generatedId=${parentId} + '-' + ${component.id.blueprintId} + '-' + ${component.id.itemId}">
+			[[${component.item.name}]] x[[${component.count}]]</button>
+		<div class="alert alert-primary"
+			th:if="${component.item.blueprint == null}">[[${component.item.name}]]
+			x[[${component.count}]]</div>
+		<ul th:id="${generatedId}" class="list-group collapse"
+			th:if="${component.item.blueprint != null}"
 			th:insert="blueprints/include/itemFragment :: item"
-			th:with="componentList=${component.item.blueprint.components}">
+			th:with="componentList=${component.item.blueprint.components},generatedId=${parentId} + '-' + ${component.id.blueprintId} + '-' + ${component.id.itemId}, parentId=${generatedId}">
 		</ul>
 	</li>
 </body>

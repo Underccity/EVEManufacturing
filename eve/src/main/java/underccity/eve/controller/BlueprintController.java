@@ -1,5 +1,6 @@
 package underccity.eve.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -13,9 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import underccity.eve.entity.Blueprint;
+import underccity.eve.entity.BlueprintCalculationRequest;
+import underccity.eve.entity.BlueprintCalculationResult;
+import underccity.eve.entity.calculation.BlueprintCalculator;
 import underccity.eve.service.BlueprintService;
 
 @Controller
@@ -42,7 +47,8 @@ public class BlueprintController {
 	public String getById(@PathVariable(value = "blueprintId") Long blueprintId, Model theModel) {
 		
 		Blueprint blueprint = bluePrintService.findById(blueprintId);
-		
+		BlueprintCalculationResult bpcr = BlueprintCalculator.calculate(blueprint, null);
+		theModel.addAttribute("calcResult", bpcr);
 		theModel.addAttribute("blueprint", blueprint);
 		return "blueprints/blueprint";
 	}
@@ -51,6 +57,13 @@ public class BlueprintController {
 	public String upsertBluePrint(@Valid Blueprint blueprint) {
 		bluePrintService.upsert(blueprint);
 		return "redirect:/blueprint/list";//bluePrintService.upsert(blueprint);
+	}
+	
+	@PostMapping("/recalculate")
+	public @ResponseBody BlueprintCalculationResult recalculateBlueprint(@RequestBody BlueprintCalculationRequest request) {
+		Blueprint blueprint = bluePrintService.findById(request.getBlueprintId());
+		BlueprintCalculationResult bpcr = BlueprintCalculator.calculate(blueprint, request.getHiddenComponents());
+		return bpcr;
 	}
 	
 	@GetMapping("/delete")

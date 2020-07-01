@@ -6,16 +6,8 @@
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<!-- Bootstrap CSS -->
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-	integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-	crossorigin="anonymous">
-<link rel="stylesheet"
-	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<th:block th:include="blueprints/include/headScripts :: headerfiles">
+</th:block>
 <title>[[${blueprint.name}]]</title>
 </head>
 
@@ -23,15 +15,100 @@
 
 	<div class="container">
 
-		<h3>[[${blueprint.name}]] x[[${blueprint.countResultItem}]]</h3>
+		<h3 id="blueprintName" th:attr="blueprintid=${blueprint.id}">[[${blueprint.name}]]
+			x[[${blueprint.countResultItem}]]</h3>
 		<hr>
-		<ul class="list-group"
-			th:insert="blueprints/include/itemFragment :: item"
-			th:with="componentList=${blueprint.components}">
-		</ul>
 
+		<button id="expandAllButton" class="btn btn-primary" type="button">Развернуть все чертежи</button>
+		<button id="collapseAllButton" class="btn btn-primary" type="button">Свернуть все чертежи</button>
+		<div class="row">
+			<div class="col-6">
+				<ul class="list-group"
+					th:insert="blueprints/include/itemFragment :: item"
+					th:with="componentList=${blueprint.components}, parentId=${'component' +blueprint.id}">
+				</ul>
+			</div>
+			<div class="col-3">
+				<table>
+					<tbody id="resultTable">
+						<tr th:each="result : ${calcResult.resultMap}">
+							<td th:text="${result.key}">keyvalue</td>
+							<td th:text="${result.value}">num</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-3">
+				<table>
+					<tbody id="surplusTable">
+						<tr th:each="resultSurplus : ${calcResult.resultSurplus}">
+							<td th:text="${resultSurplus.key}">keyvalue</td>
+							<td th:text="${resultSurplus.value}">num</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
+	<script>
+	
+	$('#expandAllButton').click(function(){
+		$('.toggledButton').removeClass( "btn-primary" ).addClass("btn-warning");
+		$('.collapse').collapse('show');
+	});
+	
+	$('#collapseAllButton').click(function(){
+		$('.toggledButton').removeClass("btn-warning").addClass("btn-primary");
+		$('.collapse').collapse('hide');		
+	});
+	
+		$('.collapse').on(
+				'hidden.bs.collapse shown.bs.collapse',//TODO Срабатывает много раз. Пофиксить
+				function recalculate() {
 
+					var hiddenComponents = $('.show');
+					var hiddenComponentsArray = [];
+					var blueprintId = $('#blueprintName').attr("blueprintid");
+					for (var i = 0; i < hiddenComponents.length; i++) {
+						hiddenComponentsArray[i] = hiddenComponents[i].id;
+					}
+
+					var recalculateObject = {
+						'blueprintId' : blueprintId,
+						'hiddenComponents' : hiddenComponentsArray
+					}
+					$.ajax({
+						type : 'POST',
+						url : '/blueprint/recalculate',
+						data : JSON.stringify(recalculateObject),
+						dataType : 'json',
+						contentType : 'application/json; charset=utf-8',
+						success : function(data) {
+							//console.log(data);
+							$('#resultTable tr').remove();
+							$('#surplusTable tr').remove();
+							$.each(data.resultMap, function(key, value) {
+								$('#resultTable').append(
+										'<tr><td>' + key + '</td><td>' + value
+												+ '</td></tr>');
+							});
+							$.each(data.resultSurplus, function(key, value) {
+								$('#surplusTable').append(
+										'<tr><td>' + key + '</td><td>' + value
+												+ '</td></tr>');
+							});
+						}
+					});
+
+					console.log(JSON.stringify(recalculateObject));
+				});
+
+		function toogleButtonClass(obj) {
+			$(obj).toggleClass("btn-primary btn-warning");
+			return;
+			а
+		}
+	</script>
 </body>
 </html>
 
