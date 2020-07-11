@@ -2,52 +2,91 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<th:block th:include="blueprints/include/headScripts :: headerfiles">
+</th:block>
 
-	<title>Items Directory</title>
+<title>Items Directory</title>
 </head>
 
 <body>
 
-<div class="container">
-
-	<h3>Items Directory</h3>
-	<a th:href="@{/blueprint/list}"
-						class="btn btn-primary btn-sm mb-3">
-						Список чертежей
-					</a>
-	<hr>
-	<a th:href="@{/item/showEditForm}"
-						class="btn btn-primary btn-sm mb-3">
-						Добавить элемент
-					</a>
-	<table class="table table-bordered table-striped">
-		<thead class="thead-dark">
-			<tr>
-				<th>Название</th>
-			</tr>
-		</thead>
+	<div class="container">
+		<div class="row">
+			<h3>Items Directory</h3>
+		</div>
+		<div class="row">
+				<a th:href="@{/blueprint/list}" class="btn btn-warning btn-sm mb-3 col-2">
+					Список чертежей
+				</a>
+			<a th:href="@{/item/showEditForm}" class="btn btn-primary btn-sm mb-3 col-2">
+				Добавить элемент 
+			</a>
+			<input type="text" class="form-control col-3 offset-5" id="itemSearch" placeholder="Search">
+		</div>
+		<div class="row">
+			<table class="table table-bordered table-striped">
+				<thead class="thead-dark">
+					<tr>
+						<th>Название</th>
+					</tr>
+				</thead>
+	
+				<tbody>
+					<tr th:each="item: ${itemPage.content}">
+						<td><a th:href="@{/item/showEditForm(itemId=${item.id})}"
+							class="btn btn-primary btn-sm mb-3"> Edit </a> <a
+							th:text="${item.name}" th:href="@{'/item/' + ${item.id}}"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<ul class="pagination">
+				<li class="page-item" th:if="${itemPage.totalPages > 0}"
+					th:each="pageNumber : ${pageNumbers}"
+					th:classappend="(${pageNumber==itemPage.number + 1} ? active)">
+					<a
+					th:href="@{/item/list(size=${itemPage.size}, page=${pageNumber})}"
+					th:text=${pageNumber} class="page-link"></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script>
+		$(function() {
+		    $(document).on('keydown.autocomplete', '#itemSearch', function() {
 		
-		<tbody>
-			<tr th:each="item: ${items}">
-				<td >
-					<a th:href="@{/item/showEditForm(itemId=${item.id})}"
-						class="btn btn-primary btn-sm mb-3">
-						Edit
-					</a>
-					<a th:text="${item.name}" th:href="@{'/item/' + ${item.id}}"></a>
-				</td>
-			</tr>
-		</tbody>		
-	</table>
-	
-</div>
-	
+				$("#itemSearch").autocomplete({
+					source: function (request, response) {
+				         $.ajax({
+				             url: "/item",
+				             data: { name: request.term },
+				             dataType: "json",
+				             success: function(data) {
+				            	 var items = [];
+				            	 $.each(data, function(key, val) {
+				                     items.push({"label": val.name, "value": val.id}); // добавляем все элементы
+				                 });
+								response(items);
+				             },
+				             error: function () {
+				                 response([]);
+				             }
+				         })
+					},
+					select: function(event, ui) {
+						 location.href = '/item/showEditForm?itemId=' + ui.item.value;
+					}
+				});
+		    });
+		
+		});
+	</script>
 </body>
 </html>
 

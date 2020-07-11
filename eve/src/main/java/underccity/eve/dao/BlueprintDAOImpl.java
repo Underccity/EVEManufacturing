@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import underccity.eve.entity.Blueprint;
 import underccity.eve.entity.Components;
 import underccity.eve.entity.ComponentsKey;
+import underccity.eve.entity.Item;
 
 @Repository
 public class BlueprintDAOImpl implements BlueprintDAO{
@@ -54,13 +55,15 @@ public class BlueprintDAOImpl implements BlueprintDAO{
 			currentSession.saveOrUpdate(blueprint);
 			if(blueprint.getComponents() != null && !blueprint.getComponents().isEmpty()) {
 				for(Components component:blueprint.getComponents()) {
-					ComponentsKey ck = new ComponentsKey();
-					ck.setBlueprintId(blueprint.getId());
-					ck.setItemId(component.getItem().getId());
-					component.setId(ck);
+					if(component.getId() == null) {
+						ComponentsKey ck = new ComponentsKey();
+						ck.setBlueprintId(blueprint.getId());
+						ck.setItemId(component.getItem().getId());
+						component.setId(ck);
+					}
 					currentSession.merge(component);
 				}
-				
+			
 			}
 			tx.commit();
 		} catch (Exception e){
@@ -68,8 +71,6 @@ public class BlueprintDAOImpl implements BlueprintDAO{
 				tx.rollback();
 				throw e;
 			}
-		} finally {
-			currentSession.close();
 		}
 		
 		
@@ -105,6 +106,18 @@ public class BlueprintDAOImpl implements BlueprintDAO{
 		}
 		
 		
+	}
+
+	@Override
+	public List<Blueprint> findByStartName(String name) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		Query<Blueprint> theQuery =
+				currentSession.createQuery("from Blueprint i WHERE i.name LIKE ?1", Blueprint.class);
+		theQuery.setParameter(1, name + "%");
+		List<Blueprint> blueprints = theQuery.getResultList();
+		
+		return blueprints;
 	}
 
 }

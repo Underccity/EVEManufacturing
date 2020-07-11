@@ -4,24 +4,24 @@ import java.util.HashMap;
 
 public class BlueprintCalculationResult {
 	
-	public BlueprintCalculationResult(HashMap<String, Integer> resultMap, HashMap<String, Integer> resultSurplus) {
+	public BlueprintCalculationResult(HashMap<String, Long> resultMap, HashMap<String, Long> resultSurplus) {
 		super();
 		this.resultMap = resultMap;
 		this.resultSurplus = resultSurplus;
 	}
-	private HashMap<String, Integer> resultMap = new HashMap<String, Integer>();
-	private HashMap<String, Integer> resultSurplus = new HashMap<String, Integer>();
+	private HashMap<String, Long> resultMap = new HashMap<String, Long>();
+	private HashMap<String, Long> resultSurplus = new HashMap<String, Long>();
 	
-	public HashMap<String, Integer> getResultMap() {
+	public HashMap<String, Long> getResultMap() {
 		return resultMap;
 	}
-	public void setResultMap(HashMap<String, Integer> resultMap) {
+	public void setResultMap(HashMap<String, Long> resultMap) {
 		this.resultMap = resultMap;
 	}
-	public HashMap<String, Integer> getResultSurplus() {
+	public HashMap<String, Long> getResultSurplus() {
 		return resultSurplus;
 	}
-	public void setResultSurplus(HashMap<String, Integer> resultSurplus) {
+	public void setResultSurplus(HashMap<String, Long> resultSurplus) {
 		this.resultSurplus = resultSurplus;
 	}
 }

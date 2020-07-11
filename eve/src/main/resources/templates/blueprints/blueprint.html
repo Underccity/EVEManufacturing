@@ -10,17 +10,32 @@
 </th:block>
 <title>[[${blueprint.name}]]</title>
 </head>
+<style>
+.fixed {
+	position: fixed;
+	height:80px;
+	overflow: auto;
+}
+</style>
 
 <body>
 
 	<div class="container">
-
-		<h3 id="blueprintName" th:attr="blueprintid=${blueprint.id}">[[${blueprint.name}]]
-			x[[${blueprint.countResultItem}]]</h3>
+		<div class="row">
+			<h3 id="blueprintName" th:attr="blueprintid=${blueprint.id}">
+				[[${blueprint.name}]] x<input id="blueprintCountResult"
+					class="form-controller col-2" type="number"
+					th:value='${blueprint.countResultItem}'>
+			</h3>
+		</div>
 		<hr>
 
-		<button id="expandAllButton" class="btn btn-primary" type="button">Развернуть все чертежи</button>
-		<button id="collapseAllButton" class="btn btn-primary" type="button">Свернуть все чертежи</button>
+		<button id="expandAllButton" class="btn btn-primary" type="button">Развернуть
+			все чертежи</button>
+		<button id="collapseAllButton" class="btn btn-primary" type="button">Свернуть
+			все чертежи</button>
+		<a th:href="@{/blueprint/list}" class="btn btn-warning col-2"> К
+			списку чертежей </a>
 		<div class="row">
 			<div class="col-6">
 				<ul class="list-group"
@@ -28,8 +43,8 @@
 					th:with="componentList=${blueprint.components}, parentId=${'component' +blueprint.id}">
 				</ul>
 			</div>
-			<div class="col-3">
-				<table>
+			<div class="col-4">
+				<table class="fixed">
 					<tbody id="resultTable">
 						<tr th:each="result : ${calcResult.resultMap}">
 							<td th:text="${result.key}">keyvalue</td>
@@ -38,8 +53,8 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-3">
-				<table>
+			<div class="col-2">
+				<table class="fixed">
 					<tbody id="surplusTable">
 						<tr th:each="resultSurplus : ${calcResult.resultSurplus}">
 							<td th:text="${resultSurplus.key}">keyvalue</td>
@@ -51,62 +66,67 @@
 		</div>
 	</div>
 	<script>
-	
-	$('#expandAllButton').click(function(){
-		$('.toggledButton').removeClass( "btn-primary" ).addClass("btn-warning");
-		$('.collapse').collapse('show');
-	});
-	
-	$('#collapseAllButton').click(function(){
-		$('.toggledButton').removeClass("btn-warning").addClass("btn-primary");
-		$('.collapse').collapse('hide');		
-	});
-	
-		$('.collapse').on(
-				'hidden.bs.collapse shown.bs.collapse',//TODO Срабатывает много раз. Пофиксить
-				function recalculate() {
+		function recalculate() {
 
-					var hiddenComponents = $('.show');
-					var hiddenComponentsArray = [];
-					var blueprintId = $('#blueprintName').attr("blueprintid");
-					for (var i = 0; i < hiddenComponents.length; i++) {
-						hiddenComponentsArray[i] = hiddenComponents[i].id;
-					}
+			var hiddenComponents = $('.show');
+			var hiddenComponentsArray = [];
+			var blueprintId = $('#blueprintName').attr("blueprintid");
+			var blueprintCountResult = $('#blueprintCountResult').val();
+			for (var i = 0; i < hiddenComponents.length; i++) {
+				hiddenComponentsArray[i] = hiddenComponents[i].id;
+			}
 
-					var recalculateObject = {
-						'blueprintId' : blueprintId,
-						'hiddenComponents' : hiddenComponentsArray
-					}
-					$.ajax({
-						type : 'POST',
-						url : '/blueprint/recalculate',
-						data : JSON.stringify(recalculateObject),
-						dataType : 'json',
-						contentType : 'application/json; charset=utf-8',
-						success : function(data) {
-							//console.log(data);
-							$('#resultTable tr').remove();
-							$('#surplusTable tr').remove();
-							$.each(data.resultMap, function(key, value) {
-								$('#resultTable').append(
-										'<tr><td>' + key + '</td><td>' + value
-												+ '</td></tr>');
-							});
-							$.each(data.resultSurplus, function(key, value) {
-								$('#surplusTable').append(
-										'<tr><td>' + key + '</td><td>' + value
-												+ '</td></tr>');
-							});
-						}
+			var recalculateObject = {
+				'blueprintId' : blueprintId,
+				'blueprintCount' : blueprintCountResult,
+				'hiddenComponents' : hiddenComponentsArray
+			}
+			$.ajax({
+				type : 'POST',
+				url : '/blueprint/recalculate',
+				data : JSON.stringify(recalculateObject),
+				dataType : 'json',
+				contentType : 'application/json; charset=utf-8',
+				success : function(data) {
+					//console.log(data);
+					$('#resultTable tr').remove();
+					$('#surplusTable tr').remove();
+					$.each(data.resultMap, function(key, value) {
+						$('#resultTable').append(
+								'<tr><td>' + key + '</td><td>' + value
+										+ '</td></tr>');
 					});
+					$.each(data.resultSurplus, function(key, value) {
+						$('#surplusTable').append(
+								'<tr><td>' + key + '</td><td>' + value
+										+ '</td></tr>');
+					});
+				}
+			});
 
-					console.log(JSON.stringify(recalculateObject));
+			console.log(JSON.stringify(recalculateObject));
+		}
+
+		$('#expandAllButton').click(
+				function() {
+					$('.toggledButton').removeClass("btn-primary").addClass(
+							"btn-warning");
+					$('.collapse').collapse('show');
 				});
+
+		$('#collapseAllButton').click(
+				function() {
+					$('.toggledButton').removeClass("btn-warning").addClass(
+							"btn-primary");
+					$('.collapse').collapse('hide');
+				});
+		$('#blueprintCountResult').change(recalculate);
+		$('.collapse').on('hidden.bs.collapse shown.bs.collapse',//TODO Срабатывает много раз. Пофиксить
+		recalculate);
 
 		function toogleButtonClass(obj) {
 			$(obj).toggleClass("btn-primary btn-warning");
 			return;
-			а
 		}
 	</script>
 </body>

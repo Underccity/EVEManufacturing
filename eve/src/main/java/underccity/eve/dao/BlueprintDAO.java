@@ -9,4 +9,5 @@ public interface BlueprintDAO {
 	public Blueprint findById(Long theId);
 	public boolean save(Blueprint blueprint);
 	public void deleteById(Long theId);
+	public List<Blueprint> findByStartName(String name);
 }

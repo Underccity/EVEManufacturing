@@ -4,6 +4,7 @@ import java.util.List;
 
 public class BlueprintCalculationRequest {
 	private Long blueprintId;
+	private Long blueprintCount;
 	private List<String> hiddenComponents;
 	
 	public BlueprintCalculationRequest(Long blueprintId, List<String> hiddenComponents) {
@@ -22,5 +23,11 @@ public class BlueprintCalculationRequest {
 	}
 	public void setBlueprintId(Long blueprintId) {
 		this.blueprintId = blueprintId;
+	}
+	public Long getBlueprintCount() {
+		return blueprintCount;
+	}
+	public void setBlueprintCount(Long blueprintCount) {
+		this.blueprintCount = blueprintCount;
 	}
 }

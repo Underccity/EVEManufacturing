@@ -7,7 +7,8 @@ import underccity.eve.exception.ExistReferencesItemException;
 
 public interface ItemDAO {
 	
-	public List<Item> findByName(String name);
+	public List<Item> findByStartName(String name);
+	public Item findByEqualName(String name);
 	public boolean upsert(Item item);
 	public List<Item> findAll();
 	public Item findById(Long id);

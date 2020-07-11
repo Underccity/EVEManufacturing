@@ -1,11 +1,17 @@
 package underccity.eve.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import underccity.eve.dao.BlueprintDAO;
 import underccity.eve.entity.Blueprint;
+import underccity.eve.entity.Item;
 
 @Service
 public class BlueprintServiceImpl implements BlueprintService {
@@ -34,11 +40,6 @@ public class BlueprintServiceImpl implements BlueprintService {
 		return result;
 	}
 
-//	@Override
-//	public Blueprint findByName(String name) {
-//		return blueprintRepository.findByName(name);
-//	}
-
 
 	@Override
 	public boolean upsert(Blueprint blueprint) {
@@ -50,6 +51,33 @@ public class BlueprintServiceImpl implements BlueprintService {
 	public void deleteById(Long id) {
 		blueprintRepository.deleteById(id);
 
+	}
+
+	@Override
+	public List<Blueprint> findByStartName(String name) {
+		return blueprintRepository.findByStartName(name);
+	}
+
+	@Override
+	public Page<Blueprint> findPaginated(Pageable pageable) {
+		List<Blueprint> blueprintList = blueprintRepository.findAll();
+		
+		int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startBlueprint = currentPage * pageSize;
+        List<Blueprint> list;
+ 
+        if (blueprintList.size() < startBlueprint) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startBlueprint + pageSize, blueprintList.size());
+            list = blueprintList.subList(startBlueprint, toIndex);
+        }
+ 
+        Page<Blueprint> blueprintPage
+          = new PageImpl<Blueprint>(list, PageRequest.of(currentPage, pageSize), blueprintList.size());
+ 
+        return blueprintPage;
 	}
 
 }

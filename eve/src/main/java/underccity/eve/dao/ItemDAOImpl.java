@@ -26,7 +26,7 @@ public class ItemDAOImpl implements ItemDAO {
 	}
 
 	@Override
-	public List<Item> findByName(String name) {
+	public List<Item> findByStartName(String name) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		
 		Query<Item> theQuery =
@@ -35,6 +35,18 @@ public class ItemDAOImpl implements ItemDAO {
 		List<Item> items = theQuery.getResultList();
 		
 		return items;
+	}
+	
+	@Override
+	public Item findByEqualName(String name) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		Query<Item> theQuery =
+				currentSession.createQuery("from Item i WHERE i.name = ?1", Item.class);
+		theQuery.setParameter(1, name);
+		Item item = theQuery.getResultList().get(0);
+		
+		return item;
 	}
 
 	@Override
@@ -51,7 +63,7 @@ public class ItemDAOImpl implements ItemDAO {
 		Session currentSession = entityManager.unwrap(Session.class);
 		
 		Query<Item> theQuery =
-				currentSession.createQuery("from Item", Item.class);
+				currentSession.createQuery("from Item order by name", Item.class);
 		List<Item> items = theQuery.getResultList();
 		
 		return items;

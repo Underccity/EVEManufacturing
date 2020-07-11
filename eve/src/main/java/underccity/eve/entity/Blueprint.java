@@ -24,7 +24,7 @@ public class Blueprint {
 	
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+//	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
 	
@@ -40,7 +40,7 @@ public class Blueprint {
 	@Column(name="countresultitem")
 	@NotNull
 	@Min(1)
-	private int countResultItem;
+	private Long countResultItem;
 	
 	@OneToMany(mappedBy = "blueprint", cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
 	@NotEmpty
@@ -71,11 +71,11 @@ public class Blueprint {
 		this.result = result;
 	}
 
-	public int getCountResultItem() {
+	public Long getCountResultItem() {
 		return countResultItem;
 	}
 
-	public void setCountResultItem(int countResultItem) {
+	public void setCountResultItem(Long countResultItem) {
 		this.countResultItem = countResultItem;
 	}
 

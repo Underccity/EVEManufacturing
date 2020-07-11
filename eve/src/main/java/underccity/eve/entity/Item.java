@@ -21,13 +21,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Item {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	//@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
 	
 	@NotBlank(message="is required")
 	@Column(name="name")
 	private String name;
+
+	@Column(name="description")
+	private String description;
 
 	@OneToOne(mappedBy="result")
 	private Blueprint blueprint;
@@ -65,5 +68,13 @@ public class Item {
 
 	public void setComponents(Set<Components> components) {
 		this.components = components;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

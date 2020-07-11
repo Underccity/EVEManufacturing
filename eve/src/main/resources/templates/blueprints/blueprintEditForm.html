@@ -2,53 +2,51 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<title>Save Blueprint</title>
+<!-- Bootstrap CSS -->
+<th:block th:include="blueprints/include/headScripts :: headerfiles">
+</th:block>
+<title>Save Blueprint</title>
 </head>
 
 <body>
 
 	<div class="container">
-	
+
 		<h3>[[${blueprint.name}]]</h3>
-				<a th:href="@{/blueprint/list}"
-			class="btn btn-primary btn-sm mb-3">
-			К списку чертежей
-		</a>
+		<a th:href="@{/blueprint/list}" class="btn btn-primary btn-sm mb-3">
+			К списку чертежей </a>
 		<hr>
-		
-		<form action="#" id="blueprintUpsertForm" th:action="@{/blueprint/upsert}"
-						 th:object="${blueprint}" method="POST">
-		
-			<input type="hidden" th:field="*{id}" />
-			
-			<input type="text" th:field="*{name}"
-					class="form-control mb-4 col-4" placeholder="Название">
-			<input type="hidden" th:field="*{result.id}" id="resultItemId"/>
- 			<input type="text" th:field="*{result.name}" class="form-control mb-4 col-4 itemName" >
+
+		<form action="#" id="blueprintUpsertForm"
+			th:action="@{/blueprint/upsert}" th:object="${blueprint}"
+			method="POST">
+
+			<input type="hidden" th:field="*{id}" /> <input type="text"
+				th:field="*{name}" class="form-control mb-4 col-4"
+				placeholder="Название"> <input type="hidden"
+				th:field="*{result.id}" id="resultItemId" /> <input type="text"
+				th:field="*{result.name}" class="form-control mb-4 col-4 itemName">
 			<input type="number" th:field="*{countResultItem}"
-					class="form-control mb-4 col-4" placeholder="Количество">
-			<fieldset id="componentList">	
-				<div th:each="component, itemStat : *{components}" class="form-row" 
-			 	th:include="blueprints/include/editableItemFragment :: edittableItem"></div>
-		 	</fieldset>
-			<button type="button" class="btn btn-info col-2" onclick="addRow()">Add Item</button>
+				class="form-control mb-4 col-4" placeholder="Количество">
+			<fieldset id="componentList">
+				<div th:each="component, itemStat : *{components}" class="form-row"
+					th:include="blueprints/include/editableItemFragment :: edittableItem"></div>
+			</fieldset>
+			<button type="button" class="btn btn-info col-2" onclick="addRow()">Add
+				Item</button>
 			<button type="submit" class="btn btn-info col-2">Save</button>
 			<a th:href="@{/blueprint/delete(blueprintId=${blueprint.id})}"
-				th:if="${blueprint.id != null}"
-				class="btn btn-danger col-2"> Delete </a>			
+				th:if="${blueprint.id != null}" class="btn btn-danger col-2">
+				Delete </a>
 		</form>
 		<hr>
 	</div>
-	
+
 	<script>
 	$(function() {
 	    $(document).on('keydown.autocomplete', '.itemName', function() {

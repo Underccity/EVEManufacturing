@@ -44,7 +44,7 @@ public class Components {
 	@JoinColumn(name="count")
 	@NotNull
 	@Min(1)
-	int count;
+	Long count;
 
 	public Blueprint getBlueprint() {
 		return blueprint;
@@ -62,11 +62,11 @@ public class Components {
 		this.item = item;
 	}
 
-	public int getCount() {
+	public Long getCount() {
 		return count;
 	}
 
-	public void setCount(int count) {
+	public void setCount(Long count) {
 		this.count = count;
 	}
 	
